@@ -8,16 +8,18 @@ import java.net.Socket;
 
 public class Main {
 
-    private static final int threadNum=4;
+    private static final int threadNum=1;
 
     public static void main(String[] args) {
         try {
-            for (int i=0;i<threadNum;i++){
+            /*for (int i=0;i<threadNum;i++){
                 Thread thread=new Thread(new Client(i));
                 thread.setDaemon(true);
                 thread.start();
                 Thread.sleep(2000);
-            }
+            }*/
+            Thread thread=new Thread(new SiasunClient());
+            thread.start();
             System.in.read();
         }catch (Exception e){
             e.printStackTrace();
