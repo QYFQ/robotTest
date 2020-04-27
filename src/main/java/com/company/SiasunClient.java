@@ -4,9 +4,10 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.Socket;
 
-public class SiasunClient implements Runnable {
+public class SiasunClient{
 
     private Socket socket;
     private String s;
@@ -15,16 +16,28 @@ public class SiasunClient implements Runnable {
     private int len;
     private byte[] buffer=new byte[512];
     private byte[] bytes=new byte[25];
+    private String host;
+    private int port;
+    private int count=0;
 
-    @Override
-    public void run() {
+    public SiasunClient(String host,int port){
+        this.host=host;
+        this.port=port;
+    }
+
+    public void start() {
         try {
-            socket=new Socket("127.0.0.1",8888);
+            socket=new Socket(host,port);
             inputStream=new DataInputStream(socket.getInputStream());
             outputStream=new DataOutputStream(socket.getOutputStream());
+            System.out.println("连接主机 "+socket.getInetAddress().toString().substring(1)+":"+socket.getPort()+" 成功");
+            System.out.println("本机地址："+socket.getLocalAddress().toString().substring(1)+":"+socket.getLocalPort());
             while ((len=inputStream.read(buffer))!=-1){
                 System.arraycopy(buffer,0,bytes,0,len);
-                ByteUtils.printHexString("",bytes);
+                count++;
+                if (count%60==0){
+                    System.out.println(port+"已收到"+count+"条信息");
+                }
                 int code=ByteUtils.bytes2Int(bytes,5);
                 byte[] response;
                 switch (code){
