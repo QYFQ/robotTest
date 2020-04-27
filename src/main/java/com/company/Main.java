@@ -18,7 +18,8 @@ public class Main {
         CommandLineParser parser=new DefaultParser();
         Options options=new Options();
         options.addOption("host",true,"Host to connect to");
-        options.addOption("port",true,"port to connect to");
+        options.addOption("port",true,"Port for client to connect to or for server to bind");
+        options.addOption("sensor",false,"Use sensor gateway server instead of robot Client");
         try {
             /*for (int i=0;i<threadNum;i++){
                 Thread thread=new Thread(new Client(i));
@@ -29,14 +30,26 @@ public class Main {
             CommandLine cmd=parser.parse(options,args);
             host="127.0.0.1";
             port=8888;
+            boolean sensorMode=false;
             if (cmd.hasOption("host")){
                 host=cmd.getOptionValue("host");
             }
             if (cmd.hasOption("port")){
                 port=Integer.parseInt(cmd.getOptionValue("port"));
             }
-            SiasunClient siasunClient=new SiasunClient(host,port);
-            siasunClient.start();
+            if (cmd.hasOption("sensor")){
+                sensorMode=true;
+            }
+            if (!sensorMode){
+                System.out.println("robotMode");
+                SiasunClient siasunClient=new SiasunClient(host,port);
+                siasunClient.start();
+            }
+            else {
+                System.out.println("sensorMode");
+                SensorGatewayServer sensorGatewayServer=new SensorGatewayServer(port);
+                sensorGatewayServer.start();
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
