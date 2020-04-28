@@ -1,12 +1,15 @@
 package com.company;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.Socket;
 
 public class SensorGatewaySender implements Runnable {
     private Socket socket;
     private DataOutputStream outputStream;
+    private DataInputStream inputStream;
     private byte[] bytes=new byte[65];
+    private byte[] buffer=new byte[512];
     private byte nodeNumber;
     private short temperature;
     private short dustConcentration;
@@ -16,6 +19,7 @@ public class SensorGatewaySender implements Runnable {
         try {
             this.socket=socket;
             this.outputStream=new DataOutputStream(socket.getOutputStream());
+            this.inputStream=new DataInputStream(socket.getInputStream());
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -24,7 +28,7 @@ public class SensorGatewaySender implements Runnable {
     @Override
     public void run() {
         try {
-            while (!socket.isClosed()){
+            while (inputStream.read(bytes)!=-1){
                 nodeNumber=1;
                 temperature=getRandomInteger(1500,3000);
                 dustConcentration=getRandomInteger(0,9999);
