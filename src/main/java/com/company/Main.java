@@ -42,8 +42,8 @@ public class Main {
             }
             if (!sensorMode){
                 System.out.println("robotMode");
-                SiasunClient siasunClient=new SiasunClient(host,port);
-                siasunClient.start();
+                Thread thread=new Thread(new Client(host,port));
+                thread.start();
             }
             else {
                 System.out.println("sensorMode");
